@@ -1,0 +1,9 @@
+- id: check_django_models
+  name: Check Django Model Files
+  description: Check Django model files for common issues
+  entry: check_django_models
+  language: python
+  language_version: python3.10
+  types: [python]
+  require_serial: true
+  minimum_pre_commit_version: 3.0.0

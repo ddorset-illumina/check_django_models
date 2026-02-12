@@ -1,0 +1,20 @@
+[project]
+name = "check-django-models"
+version = "0.0.1"
+description = "Check Django model files to ensure that best practices are being used."
+authors = [{name = "Dan Dorset", email = "ddorset@illumina.com"}]
+readme = "README.md"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+ignore = ["E501"]
+
+[poetry.group.dev.dependencies]
+pre-commit = "*"
+mypy = "*"
+
+[project.scripts]
+check_django_models = "check_django_models.check_django_models:main"

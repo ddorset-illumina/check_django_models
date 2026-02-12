@@ -1,0 +1,30 @@
+---
+# for a list of available hooks: https://pre-commit.com/hooks.html
+default_language_version:
+  python: python3.10
+fail_fast: true
+exclude: >-
+  ^docs/|/migrations/|contrib/aws/
+repos:
+  - repo: https://github.com/ambv/black
+    rev: 23.9.1
+    hooks:
+      - id: black
+        args:
+          - --safe
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.290
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+  - repo: local
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - poetry>=1.4,<2
+        name: mypy
+        entry: bash -c 'poetry install --sync; poetry run mypy -p server -p tests'
+        language: python
+        types: [python]
+        pass_filenames: false

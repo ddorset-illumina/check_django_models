@@ -1,0 +1,24 @@
+application:
+    name: SampleApp
+    version: 1.0.0
+    description: This is a sample application configuration.
+
+database:
+    type: postgres
+    host: localhost
+    port: 5432
+    username: user
+    password: password
+    database_name: sample_db
+
+logging:
+    level: INFO
+    file: /var/log/sampleapp.log
+
+features:
+    enable_feature_x: true
+    enable_feature_y: false
+
+api:
+    base_url: https://api.sampleapp.com
+    timeout: 30
