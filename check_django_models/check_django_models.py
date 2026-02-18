@@ -8,6 +8,8 @@ from check_django_models.utils import (
     check_for_null_true_argument,
     find_text_and_char_field_usages,
     output_scold_message,
+    get_comments_by_line,
+    is_rule_ignored,
 )
 
 RULES = {
@@ -79,6 +81,8 @@ def check_staged_files(file_paths: list[str], rules: dict[str, Any]) -> bool:
         if ast is None or is_file_a_django_models_file(parsed_ast=ast) is False:
             continue
 
+        comments = get_comments_by_line(file_path)
+
         if any(
             text_field_rule in rule_keys
             for text_field_rule in [
@@ -89,7 +93,13 @@ def check_staged_files(file_paths: list[str], rules: dict[str, Any]) -> bool:
             text_char_fields = find_text_and_char_field_usages(parsed_ast=ast)
             for field_node in text_char_fields:
                 if "no_null_text_fields" in rule_keys:
-                    if check_for_null_true_argument(field_node=field_node):
+                    if check_for_null_true_argument(
+                        field_node=field_node
+                    ) and not is_rule_ignored(
+                        comments=comments,
+                        line_number=field_node.lineno,
+                        rule_key="no_null_text_fields",
+                    ):
                         output_scold_message(
                             field_node=field_node,
                             file_path=file_path_str,
@@ -97,7 +107,13 @@ def check_staged_files(file_paths: list[str], rules: dict[str, Any]) -> bool:
                         )
                         test_failed = True
                 if "no_fixed_length_text" in rule_keys:
-                    if check_for_char_limit_argument(field_node=field_node):
+                    if check_for_char_limit_argument(
+                        field_node=field_node
+                    ) and not is_rule_ignored(
+                        comments=comments,
+                        line_number=field_node.lineno,
+                        rule_key="no_fixed_length_text",
+                    ):
                         output_scold_message(
                             field_node=field_node,
                             file_path=file_path_str,

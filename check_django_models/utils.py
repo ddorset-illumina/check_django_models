@@ -1,5 +1,49 @@
 import ast
 from pathlib import Path
+import tokenize
+
+
+def get_comments_by_line(file_path: Path) -> dict[int, str]:
+    """
+    Extract comments from a file and map them to their respective line numbers.
+
+    Parameters
+    ----------
+    file_path
+        The path of the file to analyze.
+
+    Returns
+    -------
+    A dictionary mapping line numbers to comments.
+    """
+    comments = {}
+    with open(file_path, "r", encoding="utf-8") as file:
+        tokens = tokenize.generate_tokens(file.readline)
+        for token in tokens:
+            if token.type == tokenize.COMMENT:
+                comments[token.start[0]] = token.string.strip()
+    return comments
+
+
+def is_rule_ignored(comments: dict[int, str], line_number: int, rule_key: str) -> bool:
+    """
+    Check if a rule is ignored on a specific line.
+
+    Parameters
+    ----------
+    comments
+        A dictionary mapping line numbers to comments.
+    line_number
+        The line number to check.
+    rule_key
+        The rule key to look for in the comment.
+
+    Returns
+    -------
+    True if the rule is ignored, False otherwise.
+    """
+    comment = comments.get(line_number, "")
+    return all(part in comment for part in ["noqa", rule_key])
 
 
 def get_ast_tree_from_python_file(file_path: Path) -> ast.AST | None:

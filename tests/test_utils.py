@@ -6,12 +6,13 @@ from check_django_models.utils import (
     get_ast_tree_from_python_file,
     check_for_null_true_argument,
     check_for_char_limit_argument,
+    is_rule_ignored,
 )
 
 RESOURCES_DIR = Path(__file__).parent / "resources"
 
 
-class UtilsTestCase(unittest.TestCase):
+class FilesCheckTestCase(unittest.TestCase):
     def test_get_ast_from_non_python_file(self) -> None:
         file_path = RESOURCES_DIR / "not_a_python_file.yaml"
         file_ast = get_ast_tree_from_python_file(file_path=file_path)
@@ -73,6 +74,37 @@ class UtilsTestCase(unittest.TestCase):
                 for node in text_field_usages
             )
         )
+
+
+class TestIsRuleIgnored(unittest.TestCase):
+    def test_rule_ignored_with_exact_match(self):
+        comments = {
+            10: "# noqa: no_null_text_fields",
+            20: "# noqa: no_fixed_length_text",
+        }
+        self.assertTrue(is_rule_ignored(comments, 10, "no_null_text_fields"))
+        self.assertTrue(is_rule_ignored(comments, 20, "no_fixed_length_text"))
+
+    def test_rule_not_ignored_with_different_rule_key(self):
+        comments = {
+            10: "# noqa: no_null_text_fields",
+            20: "# noqa: no_fixed_length_text",
+        }
+        self.assertFalse(is_rule_ignored(comments, 10, "no_fixed_length_text"))
+        self.assertFalse(is_rule_ignored(comments, 20, "no_null_text_fields"))
+
+    def test_rule_not_ignored_when_no_comment(self):
+        comments = {
+            10: "# noqa: no_null_text_fields",
+        }
+        self.assertFalse(is_rule_ignored(comments, 15, "no_null_text_fields"))
+
+    def test_rule_ignored_with_multiple_rules_in_comment(self):
+        comments = {
+            10: "# noqa: no_null_text_fields, no_fixed_length_text",
+        }
+        self.assertTrue(is_rule_ignored(comments, 10, "no_null_text_fields"))
+        self.assertTrue(is_rule_ignored(comments, 10, "no_fixed_length_text"))
 
 
 if __name__ == "__main__":
