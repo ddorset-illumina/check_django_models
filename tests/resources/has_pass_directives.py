@@ -7,8 +7,8 @@ to ignore this instance of the violation.
 
 
 class FakeModel(models.Model):
-    name = models.CharField(max_length=100)  # noqa: no_fixed_length_text
-    description = models.TextField(null=True, blank=True)  # noqa: no_null_text_fields
+    name = models.CharField(max_length=100)  # pass: no_fixed_length_text
+    description = models.TextField(null=True, blank=True)  # pass: no_null_text_fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

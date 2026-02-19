@@ -79,29 +79,29 @@ class FilesCheckTestCase(unittest.TestCase):
 class TestIsRuleIgnored(unittest.TestCase):
     def test_rule_ignored_with_exact_match(self):
         comments = {
-            10: "# noqa: no_null_text_fields",
-            20: "# noqa: no_fixed_length_text",
+            10: "# pass: no_null_text_fields",
+            20: "# pass: no_fixed_length_text",
         }
         self.assertTrue(is_rule_ignored(comments, 10, "no_null_text_fields"))
         self.assertTrue(is_rule_ignored(comments, 20, "no_fixed_length_text"))
 
     def test_rule_not_ignored_with_different_rule_key(self):
         comments = {
-            10: "# noqa: no_null_text_fields",
-            20: "# noqa: no_fixed_length_text",
+            10: "# pass: no_null_text_fields",
+            20: "# pass: no_fixed_length_text",
         }
         self.assertFalse(is_rule_ignored(comments, 10, "no_fixed_length_text"))
         self.assertFalse(is_rule_ignored(comments, 20, "no_null_text_fields"))
 
     def test_rule_not_ignored_when_no_comment(self):
         comments = {
-            10: "# noqa: no_null_text_fields",
+            10: "# pass: no_null_text_fields",
         }
         self.assertFalse(is_rule_ignored(comments, 15, "no_null_text_fields"))
 
     def test_rule_ignored_with_multiple_rules_in_comment(self):
         comments = {
-            10: "# noqa: no_null_text_fields, no_fixed_length_text",
+            10: "# pass: no_null_text_fields, no_fixed_length_text",
         }
         self.assertTrue(is_rule_ignored(comments, 10, "no_null_text_fields"))
         self.assertTrue(is_rule_ignored(comments, 10, "no_fixed_length_text"))

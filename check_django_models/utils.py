@@ -43,7 +43,7 @@ def is_rule_ignored(comments: dict[int, str], line_number: int, rule_key: str) -
     True if the rule is ignored, False otherwise.
     """
     comment = comments.get(line_number, "")
-    return all(part in comment for part in ["noqa", rule_key])
+    return all(part in comment for part in ["pass", rule_key])
 
 
 def get_ast_tree_from_python_file(file_path: Path) -> ast.AST | None:
